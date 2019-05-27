@@ -37,6 +37,7 @@ namespace ReflectionExplorer
 
         public void updateTreeView()
         {
+            treeView1.Nodes.Clear();
             foreach(Type t in InfoHolder.asm.GetTypes())
             {
                 TreeNode tmpRoot = treeView1.Nodes.Add(t.FullName);
