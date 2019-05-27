@@ -39,9 +39,21 @@ namespace ReflectionExplorer
         {
             foreach(Type t in InfoHolder.asm.GetTypes())
             {
-                TreeNode tmp = treeView1.Nodes.Add(t.FullName);
-                tmp.Tag = t;
-                foreach(MethodInfo mt in t.GetMethods())
+                TreeNode tmpRoot = treeView1.Nodes.Add(t.FullName);
+                tmpRoot.Tag = t;
+
+                //Fields
+                TreeNode tmp = tmpRoot.Nodes.Add("Fields");
+                foreach(FieldInfo fi in t.GetRuntimeFields())
+                {
+                    var tmpFi = tmp.Nodes.Add(string.Format("{3} {2} {1} {0}", fi.Name, fi.FieldType.Name, fi.IsStatic ? "static" : "", (fi.IsPrivate ? "private" : (fi.IsPublic ? "public" : "protected"))));
+                    tmpFi.Tag = fi;
+                }
+
+
+                //Methods
+                tmp = tmpRoot.Nodes.Add("Methods");
+                foreach(MethodInfo mt in t.GetRuntimeMethods())
                 {
                     ParameterInfo[] pms = mt.GetParameters();
                     StringBuilder str = new StringBuilder();
@@ -53,7 +65,8 @@ namespace ReflectionExplorer
                             str.Append(", ");
                         }
                     }
-                    tmp.Nodes.Add(string.Format("{4} {3} {1} {0}({2})", mt.Name, mt.ReturnType.Name, str.ToString(), mt.IsStatic?"static":"", (mt.IsPrivate?"private":(mt.IsPublic?"public":"protected"))));
+                    var tmpMt = tmp.Nodes.Add(string.Format("{4} {3} {1} {0}({2})", mt.Name, mt.ReturnType.Name, str.ToString(), mt.IsStatic?"static":"", (mt.IsPrivate?"private":(mt.IsPublic?"public":"protected"))));
+                    tmpMt.Tag = mt;
                 }
             }
         }
